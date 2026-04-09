@@ -118,11 +118,15 @@ def _is_endgame(board: chess.Board) -> bool:
 
 def _pst_value(piece_type: int, square: int, color: bool, endgame: bool) -> int:
     table = (_PST_ENDGAME if endgame else _PST_MIDDLEGAME)[piece_type]
+    # PST tables are written with rank 8 at index 0 (visual/black perspective).
+    # python-chess squares go rank 1 at index 0 (square 0 = a1, square 63 = h8).
+    # So for WHITE we mirror vertically to get the correct row, and for BLACK
+    # the table index already matches the square directly.
+    mirrored = chess.square(chess.square_file(square), 7 - chess.square_rank(square))
     if color == chess.WHITE:
-        return table[square]
-    else:
-        mirrored = chess.square(chess.square_file(square), 7 - chess.square_rank(square))
         return table[mirrored]
+    else:
+        return table[square]
 
 
 def evaluate(board: chess.Board) -> int:

@@ -128,7 +128,7 @@ def bridge_move(san: str, *, data_dir: Path = DEFAULT_DATA_DIR) -> str:
     eval_after = evaluate(board)
 
     # Detect event for player's move
-    event = detect_event(board, move, eval_before=eval_before, eval_after=eval_after)
+    event = detect_event(board, move, eval_before=eval_before, eval_after=eval_after, is_player_move=True)
     opening = detect_opening(board)
 
     event_name: str | None = None
@@ -185,7 +185,7 @@ def bridge_respond(san: str, *, data_dir: Path = DEFAULT_DATA_DIR) -> str:
     board.push(move)
     eval_after = evaluate(board)
 
-    event = detect_event(board, move, eval_before=eval_before, eval_after=eval_after)
+    event = detect_event(board, move, eval_before=eval_before, eval_after=eval_after, is_player_move=False)
     opening = detect_opening(board)
 
     event_name: str | None = None
@@ -246,8 +246,8 @@ def bridge_resign(*, data_dir: Path = DEFAULT_DATA_DIR) -> str:
 
     board = state.to_board()
     pgn_result = "0-1" if state.player_color == "white" else "1-0"
-    pgn_str = export_pgn(board, result=pgn_result, difficulty=state.difficulty)
-    save_pgn(board, result=pgn_result, difficulty=state.difficulty, data_dir=data_dir)
+    pgn_str = export_pgn(board, result=pgn_result, difficulty=state.difficulty, player_color=state.player_color)
+    save_pgn(board, result=pgn_result, difficulty=state.difficulty, player_color=state.player_color, data_dir=data_dir)
     updated_stats = record_result("loss", state.difficulty, data_dir=data_dir)
     delete_current_game(data_dir=data_dir)
 
@@ -260,41 +260,57 @@ def bridge_resign(*, data_dir: Path = DEFAULT_DATA_DIR) -> str:
     return json.dumps(result)
 
 
-def handle_bridge(args: list[str]) -> str:
-    """Dispatch CLI args to the appropriate bridge function.
+def handle_bridge(args: "argparse.Namespace") -> str:  # noqa: F821
+    """Dispatch argparse Namespace to the appropriate bridge function.
 
-    Usage:
-        bridge new <difficulty> <color>
-        bridge move <san>
-        bridge respond <san>
-        bridge state
-        bridge resign
+    Reads args.bridge_command, args.move_arg, args.bridge_difficulty,
+    args.bridge_color (and the global args.difficulty / args.color as
+    fallbacks).
     """
-    if not args:
-        return json.dumps({"error": "No bridge command provided."})
+    import argparse  # local import to avoid circular-import risk
 
-    cmd = args[0].lower()
+    cmd = (args.bridge_command or "state").lower()
+
+    # Resolve difficulty and color with fallbacks
+    difficulty = args.bridge_difficulty or getattr(args, "difficulty", "club") or "club"
+    color = args.bridge_color or getattr(args, "color", None) or "white"
 
     if cmd == "new":
-        if len(args) < 3:
-            return json.dumps({"error": "Usage: bridge new <difficulty> <color>"})
-        return bridge_new(args[1], args[2])
+        result = bridge_new(difficulty, color)
+        print(result)
+        return result
 
     elif cmd == "move":
-        if len(args) < 2:
-            return json.dumps({"error": "Usage: bridge move <san>"})
-        return bridge_move(args[1])
+        move_san = args.move_arg
+        if not move_san:
+            result = json.dumps({"error": "Usage: bridge move <san>"})
+            print(result)
+            return result
+        result = bridge_move(move_san)
+        print(result)
+        return result
 
     elif cmd == "respond":
-        if len(args) < 2:
-            return json.dumps({"error": "Usage: bridge respond <san>"})
-        return bridge_respond(args[1])
+        move_san = args.move_arg
+        if not move_san:
+            result = json.dumps({"error": "Usage: bridge respond <san>"})
+            print(result)
+            return result
+        result = bridge_respond(move_san)
+        print(result)
+        return result
 
     elif cmd == "state":
-        return bridge_state()
+        result = bridge_state()
+        print(result)
+        return result
 
     elif cmd == "resign":
-        return bridge_resign()
+        result = bridge_resign()
+        print(result)
+        return result
 
     else:
-        return json.dumps({"error": f"Unknown bridge command: '{cmd}'"})
+        result = json.dumps({"error": f"Unknown bridge command: '{cmd}'"})
+        print(result)
+        return result

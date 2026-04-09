@@ -115,13 +115,22 @@ def record_result(result: str, difficulty: str, *, data_dir: Path = DEFAULT_DATA
     return stats
 
 
-def export_pgn(board: chess.Board, result: str = "*", difficulty: str = "club") -> str:
+def export_pgn(
+    board: chess.Board,
+    result: str = "*",
+    difficulty: str = "club",
+    player_color: str = "white",
+) -> str:
     game = chess.pgn.Game()
     game.headers["Event"] = "Sideboard Game"
     game.headers["Site"] = "Terminal"
     game.headers["Date"] = datetime.now().strftime("%Y.%m.%d")
-    game.headers["White"] = "Player"
-    game.headers["Black"] = "Chesster"
+    if player_color == "black":
+        game.headers["White"] = "Chesster"
+        game.headers["Black"] = "Player"
+    else:
+        game.headers["White"] = "Player"
+        game.headers["Black"] = "Chesster"
     game.headers["Result"] = result
     game.headers["Annotator"] = f"Sideboard v0.1.0 ({difficulty})"
     node = game
@@ -132,9 +141,16 @@ def export_pgn(board: chess.Board, result: str = "*", difficulty: str = "club") 
     return str(game)
 
 
-def save_pgn(board: chess.Board, result: str = "*", difficulty: str = "club", *, data_dir: Path = DEFAULT_DATA_DIR) -> Path:
+def save_pgn(
+    board: chess.Board,
+    result: str = "*",
+    difficulty: str = "club",
+    player_color: str = "white",
+    *,
+    data_dir: Path = DEFAULT_DATA_DIR,
+) -> Path:
     _ensure_dir(data_dir / "games")
-    pgn_str = export_pgn(board, result=result, difficulty=difficulty)
+    pgn_str = export_pgn(board, result=result, difficulty=difficulty, player_color=player_color)
     date_str = datetime.now().strftime("%Y-%m-%d")
     games_dir = data_dir / "games"
     existing = list(games_dir.glob(f"{date_str}_*.pgn"))

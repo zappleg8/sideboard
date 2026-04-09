@@ -179,7 +179,7 @@ def main(argv: Sequence[str] | None = None) -> None:
             print("No saved game found.", file=sys.stderr)
             sys.exit(1)
         board = state.to_board()
-        print(export_pgn(board, difficulty=state.difficulty))
+        print(export_pgn(board, difficulty=state.difficulty, player_color=state.player_color))
 
     elif args.command == "install-skill":
         _install_skill()

@@ -1,3 +1,7 @@
+import json
+
+import pytest
+
 from sideboard.cli import parse_args
 
 
@@ -46,3 +50,13 @@ def test_parse_args_install_skill():
 def test_parse_args_bridge():
     args = parse_args(["bridge", "new"])
     assert args.command == "bridge"
+
+
+def test_bridge_cli_integration(tmp_path, capsys, monkeypatch):
+    """Test bridge works through the CLI dispatch."""
+    monkeypatch.setattr("sideboard.state.DEFAULT_DATA_DIR", tmp_path)
+    from sideboard.cli import main
+    main(["bridge", "new"])
+    captured = capsys.readouterr()
+    data = json.loads(captured.out)
+    assert "fen" in data
