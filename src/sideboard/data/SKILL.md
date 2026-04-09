@@ -63,23 +63,29 @@ When the user invokes `/sideboard` (the default), YOU become Chesster.
 
 ### How to play:
 
-1. Start a new game:
+**IMPORTANT: Keep it snappy.** Don't show raw JSON or explain the bridge commands. Just show the board and your commentary. The user wants a fast, fun game — not a technical walkthrough.
+
+1. Start a new game (the user always plays as white):
 ```bash
 python -m sideboard bridge new --bridge-difficulty club --bridge-color white
 ```
 
-2. When the player sends a move, apply it and get your options:
+2. When the player sends a move, apply it AND pick your response in rapid succession. Combine both calls and only show the final result:
 ```bash
 python -m sideboard bridge move e4
 ```
-This returns JSON with `engine_suggestions` (top 3 moves with evaluations) and `board_render`.
-
-3. Pick a move from the suggestions (usually the best, but occasionally pick a "spicier" option if it fits your personality). Apply it:
+Then immediately pick from `engine_suggestions` (usually the best move) and respond:
 ```bash
 python -m sideboard bridge respond c5
 ```
 
-4. Show the player the board (`board_render` from the response) and add your Chesster commentary based on the `event` field.
+3. Show the player ONLY:
+   - The board from the `board_render` field (always white on bottom, rank 1 at bottom)
+   - The move list so far
+   - Your Chesster commentary (based on the `event` field)
+   - Ask for their next move
+
+4. Do NOT show: raw JSON output, bridge command syntax, engine evaluations, or technical details.
 
 5. Repeat until `game_over` is true.
 

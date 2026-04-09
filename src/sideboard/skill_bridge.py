@@ -88,13 +88,10 @@ def bridge_new(difficulty: str, color: str, *, data_dir: Path = DEFAULT_DATA_DIR
 
     _save_state(board, difficulty, color, data_dir)
 
-    player_is_white = color == "white"
-    flipped = not player_is_white
-
     result: dict[str, Any] = {
         "game_id": game_id,
         "fen": board.fen(),
-        "board_render": render_board(board, flipped=flipped),
+        "board_render": render_board(board, flipped=False),
         "difficulty": difficulty,
         "player_color": color,
         "turn": "white",
@@ -150,13 +147,10 @@ def bridge_move(san: str, *, data_dir: Path = DEFAULT_DATA_DIR) -> str:
     # Save state with player's move applied (NOT engine's)
     _save_state(board, state.difficulty, state.player_color, data_dir)
 
-    player_is_white = state.player_color == "white"
-    flipped = not player_is_white
-
     result: dict[str, Any] = {
         "valid": True,
         "fen": board.fen(),
-        "board_render": render_board(board, flipped=flipped, last_move=move),
+        "board_render": render_board(board, flipped=False, last_move=move),
         "engine_suggestions": suggestions,
         "event": event_name,
         "event_data": event_data,
@@ -200,12 +194,9 @@ def bridge_respond(san: str, *, data_dir: Path = DEFAULT_DATA_DIR) -> str:
 
     _save_state(board, state.difficulty, state.player_color, data_dir)
 
-    player_is_white = state.player_color == "white"
-    flipped = not player_is_white
-
     result: dict[str, Any] = {
         "fen": board.fen(),
-        "board_render": render_board(board, flipped=flipped, last_move=move),
+        "board_render": render_board(board, flipped=False, last_move=move),
         "event": event_name,
         "event_data": event_data,
         "move_number": board.fullmove_number,
