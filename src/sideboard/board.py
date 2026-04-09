@@ -66,6 +66,21 @@ def captured_pieces(board: chess.Board) -> tuple[str, str]:
     )
 
 
+_MATERIAL_VALUES = {
+    chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3,
+    chess.ROOK: 5, chess.QUEEN: 9,
+}
+
+
+def material_balance(board: chess.Board) -> int:
+    """Return material balance from white's perspective. +3 means white is up a minor piece."""
+    balance = 0
+    for piece_type, value in _MATERIAL_VALUES.items():
+        balance += len(board.pieces(piece_type, chess.WHITE)) * value
+        balance -= len(board.pieces(piece_type, chess.BLACK)) * value
+    return balance
+
+
 def render_board(
     board: chess.Board,
     flipped: bool = False,
@@ -149,7 +164,7 @@ def render_screen(
             piece = board.piece_at(square)
             if piece:
                 sym = piece_symbol(piece.piece_type, piece.color)
-                fg = "#ffffff" if piece.color == chess.WHITE else "#1a1a2e"
+                fg = "#ffffee bold" if piece.color == chess.WHITE else "#1a1a2e"
                 text.append(f" {sym} ", style=f"{fg} on {bg}")
             else:
                 text.append("   ", style=f"on {bg}")
@@ -168,11 +183,21 @@ def render_screen(
     console.print()
 
     white_captured, black_captured = captured_pieces(board)
+    bal = material_balance(board)
     cap_text = Text()
     cap_text.append("  White captured: ", style="dim")
     cap_text.append(white_captured or "\u2014", style="bold")
     cap_text.append("    Black captured: ", style="dim")
     cap_text.append(black_captured or "\u2014", style="bold")
+    cap_text.append("    ")
+    if bal > 0:
+        cap_text.append(f"+{bal}", style="bold green")
+        cap_text.append(" white", style="dim")
+    elif bal < 0:
+        cap_text.append(f"+{abs(bal)}", style="bold red")
+        cap_text.append(" black", style="dim")
+    else:
+        cap_text.append("=", style="dim")
     console.print(cap_text)
     console.print()
 
