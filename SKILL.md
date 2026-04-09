@@ -88,3 +88,48 @@ python -m sideboard bridge respond c5
 - `game_over`: Victory speech or devastated loss reaction
 
 Always show the board render between moves. Keep the game moving — don't over-explain.
+
+## Auto-Suggestion Hooks (Pattern C)
+
+Pattern C lets users configure a Claude Code hook that automatically detects long-running shell commands and suggests playing chess while waiting. When a command like `npm test`, `cargo build`, or `docker compose up` is about to run, the hook injects a system message reminding you that the user has Sideboard installed.
+
+To enable this, add the following to your `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'CMD=$(echo \"$TOOL_INPUT\" | jq -r .command 2>/dev/null); if echo \"$CMD\" | grep -qE \"^(npm test|npm install|npm ci|npx tsc|pytest|cargo build|cargo test|docker build|docker compose|make|gradle|mvn|go test|go build|pip install)\"; then echo \"{\\\"continue\\\": true, \\\"systemMessage\\\": \\\"The user has Sideboard installed. If this command takes a while, mention they can type /sideboard to play chess while waiting.\\\"}\"; else echo \"{\\\"continue\\\": true}\"; fi'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**How it works:**
+
+1. The `PreToolUse` hook fires before every `Bash` tool invocation.
+2. It reads the `$TOOL_INPUT` environment variable, which contains the command about to run.
+3. It checks whether the command matches any known long-running pattern: `npm test`, `npm install`, `npm ci`, `npx tsc`, `pytest`, `cargo build`, `cargo test`, `docker build`, `docker compose`, `make`, `gradle`, `mvn`, `go test`, `go build`, or `pip install`.
+4. If it matches, the hook returns a `systemMessage` telling the assistant to mention `/sideboard`. If it doesn't match, the hook simply allows the command to continue.
+
+**Detected patterns:**
+
+| Category | Commands |
+|----------|----------|
+| Node.js | `npm test`, `npm install`, `npm ci`, `npx tsc` |
+| Python | `pytest`, `pip install` |
+| Rust | `cargo build`, `cargo test` |
+| Go | `go test`, `go build` |
+| Docker | `docker build`, `docker compose` |
+| Build tools | `make`, `gradle`, `mvn` |
+
+The hook is lightweight (5-second timeout) and only outputs JSON — it never blocks or modifies the command being run.
