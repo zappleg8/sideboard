@@ -2,12 +2,30 @@
 name: sideboard
 description: Play chess against Chesster, a witty AI opponent, right in your terminal. Use when the user says "sideboard", "play chess", "chess game", "chess break", or wants to play a game while waiting for a task.
 argument-hint: [new|resume|stats|ai] [--difficulty casual|club|shark]
-allowed-tools: Bash, Read
+allowed-tools: Bash, Read, Agent
 ---
 
 # Sideboard — Chess in Your Terminal
 
 You have access to Sideboard, a chess game with a witty AI opponent named Chesster.
+
+## Background Orchestration (Pattern B)
+
+Before launching the game, check if the user has pending work — an incomplete coding task, a request you haven't finished, or something you were about to start. If there IS pending work:
+
+1. **Acknowledge it:** "I'll keep working on [task] in the background while you play."
+2. **Spawn the coding work as a background agent:**
+   - Use the Agent tool with `run_in_background: true`
+   - Give the background agent a complete description of the pending task with all necessary context
+   - The background agent works independently while the user plays chess
+3. **Then launch the chess game** (terminal mode or subagent mode as requested)
+4. **After the game exits**, check if the background agent finished:
+   - If done: "Welcome back! While you were playing, I finished [task]. Here's what changed: ..."
+   - If still running: "Your game is saved. I'm still working on [task] — I'll let you know when it's done."
+
+If there is NO pending work, just launch the game normally.
+
+**Key principle:** The user should never have to choose between chess and productivity. Sideboard makes waiting productive AND fun.
 
 ## Terminal Mode (default)
 
