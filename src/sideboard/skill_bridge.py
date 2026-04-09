@@ -143,7 +143,7 @@ def bridge_move(san: str, *, data_dir: Path = DEFAULT_DATA_DIR) -> str:
     game_over_info = _detect_game_over(board)
     suggestions: list[tuple[str, float]] = []
     if not game_over_info["game_over"]:
-        raw_suggestions = top_moves(board, n=3, depth=3)
+        raw_suggestions = top_moves(board, n=3, depth=2)
         for eng_move, score in raw_suggestions:
             suggestions.append((board.san(eng_move), round(score, 2)))
 
