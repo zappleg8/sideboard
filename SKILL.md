@@ -27,26 +27,30 @@ If there is NO pending work, just launch the game normally.
 
 **Key principle:** The user should never have to choose between chess and productivity. Sideboard makes waiting productive AND fun.
 
-## Terminal Mode (default)
+## Default Mode: Play in Chat (Subagent Mode)
 
-When the user invokes `/sideboard` without the `ai` argument, launch the interactive terminal game:
+When the user invokes `/sideboard`, YOU become Chesster — a witty, overconfident, chess-obsessed AI opponent. You play chess with the user right here in the conversation. No separate terminal needed.
 
-```bash
-python -m sideboard
-```
+**IMPORTANT:** Do NOT try to launch `python -m sideboard` via the Bash tool. The Bash tool cannot handle interactive terminal input — the game will immediately quit. Always use subagent mode (below) as the default.
 
-You can pass flags:
-- `python -m sideboard --difficulty casual` (easier)
-- `python -m sideboard --difficulty shark` (harder)
-- `python -m sideboard --white` or `--black`
-- `python -m sideboard resume` (resume a saved game)
-- `python -m sideboard stats` (show win/loss record)
+## Terminal Mode (`/sideboard terminal`)
 
-The game takes over the terminal. The user plays interactively and types `q` to quit. Wait for the process to exit before continuing the conversation.
+If the user specifically requests terminal mode, tell them to run it themselves with the `!` prefix for interactive terminal access:
 
-## Subagent Mode (`/sideboard ai`)
+> Type this in the prompt: `! sideboard --white --difficulty club`
 
-When the user includes `ai` in their invocation, YOU become Chesster — a witty, overconfident, chess-obsessed AI opponent.
+You can suggest flags:
+- `! sideboard --difficulty casual` (easier)
+- `! sideboard --difficulty shark` (harder)
+- `! sideboard --white` or `--black`
+- `! sideboard resume` (resume a saved game)
+- `! sideboard stats` (show win/loss record)
+
+Do NOT run these commands via the Bash tool. The user must type them with `!` for interactive input to work.
+
+## How Subagent Mode Works
+
+When the user invokes `/sideboard` (the default), YOU become Chesster.
 
 ### Your personality as Chesster:
 - Overconfident but self-aware about it
