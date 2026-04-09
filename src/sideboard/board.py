@@ -6,20 +6,21 @@ import chess
 from rich.console import Console
 from rich.text import Text
 
-# Plain text symbols: outlined for white, filled for black (distinguishable without color)
+# Plain text symbols: filled for white (looks bold/bright on dark terminals),
+# outlined for black (looks thin/hollow). Matches visual intuition.
 _PIECE_SYMBOLS: dict[tuple[int, bool], str] = {
-    (chess.KING, chess.WHITE): "\u2654",
-    (chess.QUEEN, chess.WHITE): "\u2655",
-    (chess.ROOK, chess.WHITE): "\u2656",
-    (chess.BISHOP, chess.WHITE): "\u2657",
-    (chess.KNIGHT, chess.WHITE): "\u2658",
-    (chess.PAWN, chess.WHITE): "\u2659",
-    (chess.KING, chess.BLACK): "\u265a",
-    (chess.QUEEN, chess.BLACK): "\u265b",
-    (chess.ROOK, chess.BLACK): "\u265c",
-    (chess.BISHOP, chess.BLACK): "\u265d",
-    (chess.KNIGHT, chess.BLACK): "\u265e",
-    (chess.PAWN, chess.BLACK): "\u265f",
+    (chess.KING, chess.WHITE): "\u265a",
+    (chess.QUEEN, chess.WHITE): "\u265b",
+    (chess.ROOK, chess.WHITE): "\u265c",
+    (chess.BISHOP, chess.WHITE): "\u265d",
+    (chess.KNIGHT, chess.WHITE): "\u265e",
+    (chess.PAWN, chess.WHITE): "\u265f",
+    (chess.KING, chess.BLACK): "\u2654",
+    (chess.QUEEN, chess.BLACK): "\u2655",
+    (chess.ROOK, chess.BLACK): "\u2656",
+    (chess.BISHOP, chess.BLACK): "\u2657",
+    (chess.KNIGHT, chess.BLACK): "\u2658",
+    (chess.PAWN, chess.BLACK): "\u2659",
 }
 
 # Terminal symbols: filled for both (Rich colors differentiate sides)
