@@ -6,13 +6,15 @@ import chess
 from rich.console import Console
 from rich.text import Text
 
+# Use filled (solid) symbols for both colors — outlined pieces are too thin
+# on colored terminal backgrounds. Colors differentiate the sides.
 _PIECE_SYMBOLS: dict[tuple[int, bool], str] = {
-    (chess.KING, chess.WHITE): "\u2654",
-    (chess.QUEEN, chess.WHITE): "\u2655",
-    (chess.ROOK, chess.WHITE): "\u2656",
-    (chess.BISHOP, chess.WHITE): "\u2657",
-    (chess.KNIGHT, chess.WHITE): "\u2658",
-    (chess.PAWN, chess.WHITE): "\u2659",
+    (chess.KING, chess.WHITE): "\u265a",
+    (chess.QUEEN, chess.WHITE): "\u265b",
+    (chess.ROOK, chess.WHITE): "\u265c",
+    (chess.BISHOP, chess.WHITE): "\u265d",
+    (chess.KNIGHT, chess.WHITE): "\u265e",
+    (chess.PAWN, chess.WHITE): "\u265f",
     (chess.KING, chess.BLACK): "\u265a",
     (chess.QUEEN, chess.BLACK): "\u265b",
     (chess.ROOK, chess.BLACK): "\u265c",
@@ -164,7 +166,7 @@ def render_screen(
             piece = board.piece_at(square)
             if piece:
                 sym = piece_symbol(piece.piece_type, piece.color)
-                fg = "#ffffee bold" if piece.color == chess.WHITE else "#1a1a2e"
+                fg = "#ffd700 bold" if piece.color == chess.WHITE else "#1a1a2e"
                 text.append(f" {sym} ", style=f"{fg} on {bg}")
             else:
                 text.append("   ", style=f"on {bg}")

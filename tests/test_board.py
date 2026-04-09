@@ -3,7 +3,7 @@ from sideboard.board import render_board, piece_symbol, captured_pieces
 
 
 def test_piece_symbol_white_king():
-    assert piece_symbol(chess.KING, chess.WHITE) == "\u2654"
+    assert piece_symbol(chess.KING, chess.WHITE) == "\u265a"
 
 
 def test_piece_symbol_black_pawn():
@@ -17,7 +17,7 @@ def test_render_board_starting_position():
     assert "8 \u2502" in output
     assert "1 \u2502" in output
     assert "\u265c" in output
-    assert "\u2656" in output
+    assert "\u265c" in output  # both colors use filled symbols now
 
 
 def test_render_board_flipped():
@@ -33,7 +33,7 @@ def test_render_board_highlights_last_move():
     move = chess.Move.from_uci("e2e4")
     board.push(move)
     output = render_board(board, last_move=move)
-    assert "\u2654" in output or "\u265a" in output
+    assert "\u265a" in output
 
 
 def test_captured_pieces_initial():
