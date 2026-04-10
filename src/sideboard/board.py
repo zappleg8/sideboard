@@ -6,21 +6,21 @@ import chess
 from rich.console import Console
 from rich.text import Text
 
-# Plain text symbols: filled for white (looks bold/bright on dark terminals),
-# outlined for black (looks thin/hollow). Matches visual intuition.
+# Plain text symbols: ASCII letters. Uppercase=white, lowercase=black.
+# Unicode chess symbols are double-width in many terminals, breaking grid alignment.
 _PIECE_SYMBOLS: dict[tuple[int, bool], str] = {
-    (chess.KING, chess.WHITE): "\u265a",
-    (chess.QUEEN, chess.WHITE): "\u265b",
-    (chess.ROOK, chess.WHITE): "\u265c",
-    (chess.BISHOP, chess.WHITE): "\u265d",
-    (chess.KNIGHT, chess.WHITE): "\u265e",
-    (chess.PAWN, chess.WHITE): "\u265f",
-    (chess.KING, chess.BLACK): "\u2654",
-    (chess.QUEEN, chess.BLACK): "\u2655",
-    (chess.ROOK, chess.BLACK): "\u2656",
-    (chess.BISHOP, chess.BLACK): "\u2657",
-    (chess.KNIGHT, chess.BLACK): "\u2658",
-    (chess.PAWN, chess.BLACK): "\u2659",
+    (chess.KING, chess.WHITE): "K",
+    (chess.QUEEN, chess.WHITE): "Q",
+    (chess.ROOK, chess.WHITE): "R",
+    (chess.BISHOP, chess.WHITE): "B",
+    (chess.KNIGHT, chess.WHITE): "N",
+    (chess.PAWN, chess.WHITE): "P",
+    (chess.KING, chess.BLACK): "k",
+    (chess.QUEEN, chess.BLACK): "q",
+    (chess.ROOK, chess.BLACK): "r",
+    (chess.BISHOP, chess.BLACK): "b",
+    (chess.KNIGHT, chess.BLACK): "n",
+    (chess.PAWN, chess.BLACK): "p",
 }
 
 # Terminal symbols: filled for both (Rich colors differentiate sides)

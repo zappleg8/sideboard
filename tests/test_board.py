@@ -3,11 +3,11 @@ from sideboard.board import render_board, piece_symbol, captured_pieces
 
 
 def test_piece_symbol_white_king():
-    assert piece_symbol(chess.KING, chess.WHITE) == "\u265a"  # filled (bold on dark terminals)
+    assert piece_symbol(chess.KING, chess.WHITE) == "K"
 
 
 def test_piece_symbol_black_pawn():
-    assert piece_symbol(chess.PAWN, chess.BLACK) == "\u2659"  # outlined (thin on dark terminals)
+    assert piece_symbol(chess.PAWN, chess.BLACK) == "p"
 
 
 def test_render_board_starting_position():
@@ -16,8 +16,8 @@ def test_render_board_starting_position():
     assert "a   b   c   d   e   f   g   h" in output
     assert "8 \u2502" in output
     assert "1 \u2502" in output
-    assert "\u265c" in output  # white rook (filled)
-    assert "\u2656" in output  # black rook (outlined)
+    assert " R " in output  # white rook
+    assert " r " in output  # black rook
 
 
 def test_render_board_flipped():
@@ -33,7 +33,7 @@ def test_render_board_highlights_last_move():
     move = chess.Move.from_uci("e2e4")
     board.push(move)
     output = render_board(board, last_move=move)
-    assert "\u2654" in output or "\u265a" in output
+    assert " K " in output  # white king
 
 
 def test_captured_pieces_initial():
@@ -49,5 +49,5 @@ def test_captured_pieces_after_capture():
     board.push_san("d5")
     board.push_san("exd5")
     white_captured, black_captured = captured_pieces(board)
-    assert "\u2659" in white_captured  # captured black pawn (outlined)
+    assert "p" in white_captured  # captured black pawn
     assert black_captured == ""
